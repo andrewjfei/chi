@@ -3,6 +3,7 @@
 
 # project
 /target
+.env
 
 # cargo
 Cargo.lock
