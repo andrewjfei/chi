@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dotenv = "0.15.0"
-mongodb = "2.6.0"
-tokio = "1.30.0"
+chrono = "0.4.26" # datetime
+dotenv = "0.15.0" # environment variables
+lazy_static = "1.4.0" # lazy load static variables
+mongodb = "2.6.0" # mongodb
+serde = "1.0.183" # serialise & deserialise
+tokio = "1.30.0" # async

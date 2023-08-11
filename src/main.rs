@@ -1,9 +1,16 @@
-mod db;
+// register modules
+mod models;
+mod daos;
+mod repositories;
+mod utils;
+mod configs;
 
 use std::env::{args, Args}; // import method to read program input arguments
 
-use db::client::connect;
+use daos::clipboard_data_dao::ClipboardDataDao;
+use repositories::clipboard_data_repository::ClipboardDataRepository;
 use dotenv::dotenv;
+use chrono::Local;
 
 #[tokio::main]
 async fn main() {
@@ -18,11 +25,13 @@ async fn main() {
         println!("{}", arg);
     }
 
-    // attmept to connect to mongodb client
-    let client = connect().await;
+    let timestamp = Local::now();
+    let data_type = "TEXT".to_string();
+    let data = "The quick brown fox jumped over the lazy brown dog.".to_string();
+  
+    let clipboard_data_dao = ClipboardDataDao::new(timestamp, data_type, data);
 
-    // list the names of the databases in that deployment.
-    for db_name in client.list_database_names(None, None).await.unwrap() {
-        println!("{}", db_name);
-    }
+    println!("{:#?}", clipboard_data_dao);
+
+    ClipboardDataRepository::save(&clipboard_data_dao).await;
 }
