@@ -27,7 +27,7 @@ async fn main() {
     }
 
     let date_time = Local::now();
-    let data = "Password".to_string();
+    let data = "johnsmith".to_string();
 
     ClipboardDataService::create_clipboard_data(date_time, data).await;
 }

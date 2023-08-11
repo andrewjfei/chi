@@ -10,5 +10,7 @@ chrono = "0.4.26" # datetime
 dotenv = "0.15.0" # environment variables
 lazy_static = "1.4.0" # lazy load static variables
 mongodb = "2.6.0" # mongodb
+regex = "1.9.3" # regex support
 serde = "1.0.183" # serialise & deserialise
 tokio = "1.30.0" # async
+url = "2.4.0" # url support
