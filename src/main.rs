@@ -1,22 +1,22 @@
 // register modules
-mod models;
-mod daos;
-mod repositories;
-mod utils;
 mod configs;
+mod daos;
+mod models;
+mod repositories;
+mod services;
+mod utils;
 
 use std::env::{args, Args}; // import method to read program input arguments
 
-use daos::clipboard_data_dao::ClipboardDataDao;
-use repositories::clipboard_data_repository::ClipboardDataRepository;
-use dotenv::dotenv;
 use chrono::Local;
+use dotenv::dotenv;
+use services::clipboard_data_service::ClipboardDataService;
 
 #[tokio::main]
 async fn main() {
     // load .env variables as environment variables
     dotenv().expect("failed to load .env file");
-    
+
     // load application arguments
     let args: Args = args();
 
@@ -25,13 +25,8 @@ async fn main() {
         println!("{}", arg);
     }
 
-    let timestamp = Local::now();
-    let data_type = "TEXT".to_string();
-    let data = "The quick brown fox jumped over the lazy brown dog.".to_string();
-  
-    let clipboard_data_dao = ClipboardDataDao::new(timestamp, data_type, data);
+    let date_time = Local::now();
+    let data = "Hello World!".to_string();
 
-    println!("{:#?}", clipboard_data_dao);
-
-    ClipboardDataRepository::save(&clipboard_data_dao).await;
+    ClipboardDataService::create_clipboard_data(date_time, data).await;
 }
