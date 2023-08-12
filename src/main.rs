@@ -7,10 +7,11 @@ mod repositories;
 mod services;
 mod utils;
 
-use std::env::{args, Args}; // import method to read program input arguments
-
 use chrono::Local;
 use dotenv::dotenv;
+use std::env::{args, Args};
+
+use repositories::clipboard_data_repository::ClipboardDataRepository;
 use services::clipboard_data_service::ClipboardDataService;
 
 #[tokio::main]
@@ -27,7 +28,10 @@ async fn main() {
     }
 
     let date_time = Local::now();
-    let data = "johnsmith".to_string();
+    let data = "randyjones".to_string();
 
-    ClipboardDataService::create_clipboard_data(date_time, data).await;
+    // ClipboardDataService::create_clipboard_data(date_time, data).await;
+    let list = ClipboardDataRepository::retrieve(5).await;
+
+    dbg!(list);
 }

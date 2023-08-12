@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use serde::Serializer;
+use serde::{Serialize, Serializer};
 
 use crate::enums::clipboard_data_type::ClipboardDataType;
 
@@ -8,25 +8,24 @@ pub struct SerialiserUtil {
 }
 
 impl SerialiserUtil {
-    pub fn date_time_serialiser<S>(
+    pub fn serialise_date_time<S>(
         date_time: &DateTime<Local>,
-        serializer: S,
+        serialiser: S,
     ) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        let date_time_str = date_time.to_rfc3339();
-        return serializer.serialize_str(&date_time_str);
+        return date_time.to_rfc3339().serialize(serialiser);
     }
 
-    pub fn clipboard_data_type_serialiser<S>(
+    pub fn serialise_clipboard_data_type<S>(
         data_type: &ClipboardDataType,
-        serializer: S,
+        serialiser: S,
     ) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        let data_type_str = match data_type {
+        let clipboard_data_type_str = match data_type {
             ClipboardDataType::Email => "EMAIL",
             ClipboardDataType::File => "FILE",
             ClipboardDataType::Image => "IMAGE",
@@ -34,6 +33,8 @@ impl SerialiserUtil {
             ClipboardDataType::Text => "TEXT",
         };
 
-        return serializer.serialize_str(&data_type_str);
+        // return serialiser.serialize_str(&data_type_str);
+
+        return clipboard_data_type_str.serialize(serialiser);
     }
 }
