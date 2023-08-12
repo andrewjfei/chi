@@ -8,7 +8,7 @@ use crate::{
 };
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ClipboardDataDao {
+pub struct ClipboardData {
     _id: ObjectId,
     #[serde(
         serialize_with = "SerialiserUtil::serialise_date_time",
@@ -23,13 +23,13 @@ pub struct ClipboardDataDao {
     data: String,
 }
 
-impl ClipboardDataDao {
+impl ClipboardData {
     pub fn new(
         date_time: DateTime<Local>,
         data_type: ClipboardDataType,
         data: String,
-    ) -> ClipboardDataDao {
-        return ClipboardDataDao {
+    ) -> ClipboardData {
+        return ClipboardData {
             _id: ObjectId::new(),
             date_time,
             data_type,

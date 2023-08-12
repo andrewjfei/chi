@@ -5,8 +5,8 @@ use mongodb::{
 };
 
 use crate::{
-    configs::database_config::DATABASE_CONFIG, daos::clipboard_data_dao::ClipboardDataDao,
-    models::database_client::DatabaseClient,
+    configs::database_config::DATABASE_CONFIG,
+    models::{database_client::DatabaseClient, clipboard_data::ClipboardData},
 };
 
 pub struct ClipboardDataRepository {
@@ -14,7 +14,7 @@ pub struct ClipboardDataRepository {
 }
 
 impl ClipboardDataRepository {
-    pub async fn save(clipboard_data_dao: ClipboardDataDao) {
+    pub async fn save(clipboard_data_dao: ClipboardData) {
         // get clipboard data collection
         let collection = Self::get_collection().await;
 
@@ -32,7 +32,7 @@ impl ClipboardDataRepository {
         collection.insert_one(doc, None).await.unwrap();
     }
 
-    pub async fn retrieve(limit: u32) -> Vec<ClipboardDataDao> {
+    pub async fn retrieve(limit: u32) -> Vec<ClipboardData> {
         // get clipboard data collection
         let collection = Self::get_collection().await;
 
@@ -53,11 +53,11 @@ impl ClipboardDataRepository {
             .await
             .expect("failed to retrieve documents");
 
-        let mut clipboard_data_list: Vec<ClipboardDataDao> = Vec::new();
+        let mut clipboard_data_list: Vec<ClipboardData> = Vec::new();
 
         // iterate through the cursor
         while cursor.advance().await.unwrap() {
-            let clipboard_data: ClipboardDataDao = Self::to_clipboard_data(cursor.current())
+            let clipboard_data: ClipboardData = Self::to_clipboard_data(cursor.current())
                 .expect("failed to deserialise ClipboardData document");
             clipboard_data_list.push(clipboard_data);
         }
@@ -70,9 +70,9 @@ impl ClipboardDataRepository {
         return db_client.get_collection(DATABASE_CONFIG.get_collection());
     }
 
-    fn to_clipboard_data(raw_doc: &RawDocument) -> Result<ClipboardDataDao, Error> {
+    fn to_clipboard_data(raw_doc: &RawDocument) -> Result<ClipboardData, Error> {
         let bson: Bson = from_slice::<Bson>(raw_doc.as_bytes())
             .expect("failed to convert RawDocument bytes to Bson");
-        return from_bson::<ClipboardDataDao>(bson);
+        return from_bson::<ClipboardData>(bson);
     }
 }

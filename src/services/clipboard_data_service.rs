@@ -1,9 +1,9 @@
 use chrono::{DateTime, Local};
 
 use crate::{
-    daos::clipboard_data_dao::ClipboardDataDao, enums::clipboard_data_type::ClipboardDataType,
+    enums::clipboard_data_type::ClipboardDataType,
     repositories::clipboard_data_repository::ClipboardDataRepository,
-    utils::clipboard_data_type_util::ClipboardDataTypeUtil,
+    utils::clipboard_data_type_util::ClipboardDataTypeUtil, models::clipboard_data::ClipboardData,
 };
 
 pub struct ClipboardDataService {
@@ -14,7 +14,7 @@ impl ClipboardDataService {
     pub async fn create_clipboard_data(date_time: DateTime<Local>, data: String) {
         let data_type = Self::process(&data);
 
-        let clipboard_data_dao = ClipboardDataDao::new(date_time, data_type, data);
+        let clipboard_data_dao = ClipboardData::new(date_time, data_type, data);
 
         println!("{:#?}", clipboard_data_dao);
 

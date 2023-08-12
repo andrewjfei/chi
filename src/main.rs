@@ -1,6 +1,5 @@
 // register modules
 mod configs;
-mod daos;
 mod enums;
 mod models;
 mod repositories;
@@ -28,9 +27,9 @@ async fn main() {
     }
 
     let date_time = Local::now();
-    let data = "randyjones".to_string();
+    let data = "https://chi.com".to_string();
 
-    // ClipboardDataService::create_clipboard_data(date_time, data).await;
+    ClipboardDataService::create_clipboard_data(date_time, data).await;
     let list = ClipboardDataRepository::retrieve(5).await;
 
     dbg!(list);
