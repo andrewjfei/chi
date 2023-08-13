@@ -14,11 +14,11 @@ impl ClipboardDataService {
     pub async fn create_clipboard_data(date_time: DateTime<Local>, data: String) {
         let data_type = Self::process(&data);
 
-        let clipboard_data_dao = ClipboardData::new(date_time, data_type, data);
+        let clipboard_data = ClipboardData::new(date_time, data_type, data);
 
-        println!("{:#?}", clipboard_data_dao);
+        println!("{:#?}", clipboard_data);
 
-        ClipboardDataRepository::save(clipboard_data_dao).await;
+        ClipboardDataRepository::create(&clipboard_data).await;
     }
 
     fn process(data: &str) -> ClipboardDataType {

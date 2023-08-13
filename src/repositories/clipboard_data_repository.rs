@@ -14,19 +14,12 @@ pub struct ClipboardDataRepository {
 }
 
 impl ClipboardDataRepository {
-    pub async fn save(clipboard_data_dao: ClipboardData) {
+    pub async fn create(clipboard_data: &ClipboardData) {
         // get clipboard data collection
-        let collection = Self::get_collection().await;
+        let collection: Collection<Document> = Self::get_collection().await;
 
-        // serialise clipboard data dao to bson
-        let serialised_object =
-            to_bson(&clipboard_data_dao).expect("error serialising clipboard data object to bson");
-
-        // verify serialised object is a document
-        let doc = match serialised_object {
-            Bson::Document(doc) => doc,
-            _ => panic!("serialized object is not a document"),
-        };
+        // convert clipboard data object to a document
+        let doc: Document = Self::to_document(clipboard_data).unwrap();
 
         // insert document into collection
         collection.insert_one(doc, None).await.unwrap();
@@ -57,8 +50,11 @@ impl ClipboardDataRepository {
 
         // iterate through the cursor
         while cursor.advance().await.unwrap() {
+            // convert raw document to clipboard data model
             let clipboard_data: ClipboardData = Self::to_clipboard_data(cursor.current())
                 .expect("failed to deserialise ClipboardData document");
+
+            // add clipboard data model to list
             clipboard_data_list.push(clipboard_data);
         }
 
@@ -70,9 +66,24 @@ impl ClipboardDataRepository {
         return db_client.get_collection(DATABASE_CONFIG.get_collection());
     }
 
+    fn to_document(clipboard_data: &ClipboardData) -> Result<Document, Error> {
+        // serialise clipboard data model to bson
+        let serialised_object: Bson =
+            to_bson(clipboard_data).expect("error serialising clipboard data model to bson");
+
+        // verify serialised object is a document
+        return match serialised_object {
+            Bson::Document(document) => Ok(document),
+            _ => panic!("serialized object is not a document"),
+        };
+    }
+
     fn to_clipboard_data(raw_doc: &RawDocument) -> Result<ClipboardData, Error> {
+        // deserialise raw document to bson
         let bson: Bson = from_slice::<Bson>(raw_doc.as_bytes())
-            .expect("failed to convert RawDocument bytes to Bson");
+            .expect("failed to convert raw document bytes to bson");
+
+        // deserialise bson to clipboard data model
         return from_bson::<ClipboardData>(bson);
     }
 }
