@@ -3,6 +3,9 @@ use serde::{Serialize, Serializer};
 
 use crate::enums::clipboard_data_type::ClipboardDataType;
 
+#[cfg(test)]
+mod tests;
+
 pub struct SerialiserUtil {
     // no properties
 }
@@ -15,7 +18,8 @@ impl SerialiserUtil {
     where
         S: Serializer,
     {
-        return date_time.to_rfc3339().serialize(serialiser);
+        let date_time_str = date_time.to_rfc3339();
+        return date_time_str.serialize(serialiser);
     }
 
     pub fn serialise_clipboard_data_type<S>(
@@ -32,8 +36,6 @@ impl SerialiserUtil {
             ClipboardDataType::Link => "LINK",
             ClipboardDataType::Text => "TEXT",
         };
-
-        // return serialiser.serialize_str(&data_type_str);
 
         return clipboard_data_type_str.serialize(serialiser);
     }

@@ -14,6 +14,7 @@ impl DeserialiserUtil {
     {
         let date_time_str: String = Deserialize::deserialize(deserialiser)
             .expect("failed to desrialise DateTime data type");
+
         return DateTime::parse_from_rfc3339(&date_time_str)
             .map_err(Error::custom)
             .map(|date_time| date_time.with_timezone(&Local));

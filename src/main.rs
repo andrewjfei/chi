@@ -27,7 +27,7 @@ async fn main() {
     }
 
     let date_time = Local::now();
-    let data = "https://chi.com".to_string();
+    let data = "https://google.com".to_string();
 
     ClipboardDataService::create_clipboard_data(date_time, data).await;
     let list = ClipboardDataRepository::retrieve(5).await;

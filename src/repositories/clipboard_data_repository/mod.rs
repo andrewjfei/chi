@@ -1,12 +1,12 @@
 use mongodb::{
-    bson::{doc, from_bson, from_slice, to_bson, Bson, Document, RawDocument, de::Error},
+    bson::{de::Error, doc, from_bson, from_slice, to_bson, Bson, Document, RawDocument},
     options::FindOptions,
     Collection, Cursor,
 };
 
 use crate::{
     configs::database_config::DATABASE_CONFIG,
-    models::{database_client::DatabaseClient, clipboard_data::ClipboardData},
+    models::{clipboard_data::ClipboardData, database_client::DatabaseClient},
 };
 
 pub struct ClipboardDataRepository {
