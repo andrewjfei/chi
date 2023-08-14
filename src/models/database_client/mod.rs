@@ -30,15 +30,17 @@ impl DatabaseClient {
 
     // connect to database
     async fn connect() -> DatabaseClient {
-        let mut client_options: ClientOptions = ClientOptions::parse(DATABASE_CONFIG.get_uri().to_string())
-            .await
-            .expect("uri is invalid");
+        let mut client_options: ClientOptions =
+            ClientOptions::parse(DATABASE_CONFIG.get_uri().to_string())
+                .await
+                .expect("uri is invalid");
 
         // manually set an option
         client_options.app_name = Some(DATABASE_CONFIG.get_db().to_string());
 
         // create database client connection
-        let client: Client = Client::with_options(client_options).expect("client options are invalid");
+        let client: Client =
+            Client::with_options(client_options).expect("client options are invalid");
 
         // select database to use
         let db: Database = client.database(DATABASE_CONFIG.get_db());

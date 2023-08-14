@@ -6,8 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4.26" # datetime
+chrono = "0.4.26" # date time
 clipboard = "0.5.0" # clipboard api
+crossterm = "0.27.0" # terminal utilities
 dotenv = "0.15.0" # environment variables
 lazy_static = "1.4.0" # lazy load static variables
 mockall = "0.11.4" # mocking

@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 
 use crate::{
-    enums::clipboard_data_type::ClipboardDataType, models::clipboard_data::{ClipboardData, self},
+    enums::clipboard_data_type::ClipboardDataType, models::clipboard_data::ClipboardData,
     repositories::clipboard_data_repository::ClipboardDataRepository,
     utils::clipboard_data_type_util::ClipboardDataTypeUtil,
 };
@@ -16,15 +16,16 @@ impl ClipboardDataService {
 
         let clipboard_data: ClipboardData = ClipboardData::new(date_time, data_type, data);
 
-        println!("{:#?}", clipboard_data);
+        // println!("{:#?}", clipboard_data);
 
         ClipboardDataRepository::create(&clipboard_data).await;
     }
 
     pub async fn fetch_clipboard_data(limit: u32) -> Vec<ClipboardData> {
-        let clipboard_data_list: Vec<ClipboardData> = ClipboardDataRepository::retrieve(limit).await;
+        let clipboard_data_list: Vec<ClipboardData> =
+            ClipboardDataRepository::retrieve(limit).await;
 
-        println!("{:#?}", clipboard_data_list);
+        // println!("{:#?}", clipboard_data_list);
 
         return clipboard_data_list;
     }

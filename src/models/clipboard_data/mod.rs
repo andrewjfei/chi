@@ -36,4 +36,12 @@ impl ClipboardData {
             data,
         };
     }
+
+    pub fn get_date_time(&self) -> DateTime<Local> {
+        return self.date_time;
+    }
+
+    pub fn get_data(&self) -> &str {
+        return &self.data;
+    }
 }

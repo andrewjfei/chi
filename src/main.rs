@@ -6,22 +6,76 @@ mod repositories;
 mod services;
 mod utils;
 
-use chrono::{Local, DateTime};
+use chrono::{DateTime, Local};
 use clipboard::{ClipboardContext, ClipboardProvider};
+use crossterm::event::{read, Event, KeyCode, KeyEvent};
 use dotenv::dotenv;
-use std::error::Error;
+use std::{
+    error::Error,
+    io::{stdout, Write},
+};
 
-use repositories::clipboard_data_repository::ClipboardDataRepository;
 use services::clipboard_data_service::ClipboardDataService;
+
+use crate::models::clipboard_data::ClipboardData;
 
 #[tokio::main]
 async fn main() {
     // load .env variables as environment variables
     dotenv().expect("failed to load .env file");
 
+    // spawn async thread to handle terminal cli commands
+    tokio::spawn(async {
+        loop {
+            print!("chi> ");
+
+            // force print all buffered text into the standout output stream
+            stdout()
+                .flush()
+                .expect("failed to flush standard output text");
+
+            // intialise command string
+            let mut command: String = String::new();
+
+            // loop through all input characters after user hits enter
+            loop {
+                if let Event::Key(KeyEvent {
+                    code,
+                    modifiers: _,
+                    state: _,
+                    kind: _,
+                }) = read().unwrap()
+                {
+                    match code {
+                        KeyCode::Char(character) => {
+                            if character == ';' {
+                                break; // exit the inner loop
+                            } else {
+                                command.push(character);
+                            }
+                        }
+                        _ => {} // throw away anything that isn't a character
+                    }
+                }
+            }
+
+            // process command
+            if command.trim().eq("list") {
+                // fetch clipboard data from database
+                let clipboard_data_list: Vec<ClipboardData> = ClipboardDataService::fetch_clipboard_data(5).await;
+
+                for clipboard_data in clipboard_data_list {
+                    println!("{} {}", clipboard_data.get_date_time(), clipboard_data.get_data());
+                }
+            }
+        }
+    });
+
+    // todo: fix issue where clipboard thread does not always persist, could be issue with mongodb connection
+
     // create a clipboard context
-    let mut clipboard_context: ClipboardContext = ClipboardProvider::new()
-        .expect("failed to create clipboard context");
+    let mut clipboard_context: ClipboardContext =
+        ClipboardProvider::new().expect("failed to create clipboard context");
 
     // empty previous data string
     let mut previous_data: String = String::new();
@@ -40,18 +94,18 @@ async fn main() {
                     // persist data to database
                     ClipboardDataService::add_clipboard_data(date_time, data.clone()).await;
 
+                    println!("{}", data);
+
                     // set current data as previous data
                     previous_data = data;
                 }
-            },
+            }
             Err(err) => {
                 // ignore empty clipboard data error
                 if !err.to_string().contains("returned empty") {
                     println!("{}", err)
                 }
-            },
+            }
         }
     }
-
-    // ClipboardDataService::fetch_clipboard_data(5).await;
 }
