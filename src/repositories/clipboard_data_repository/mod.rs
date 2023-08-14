@@ -27,7 +27,7 @@ impl ClipboardDataRepository {
 
     pub async fn retrieve(limit: u32) -> Vec<ClipboardData> {
         // get clipboard data collection
-        let collection = Self::get_collection().await;
+        let collection: Collection<Document> = Self::get_collection().await;
 
         // configuration for sorting the documents before retrieval
         let sort_options: Document = doc! {
@@ -62,7 +62,7 @@ impl ClipboardDataRepository {
     }
 
     async fn get_collection() -> Collection<Document> {
-        let db_client = DatabaseClient::instance().await;
+        let db_client: &DatabaseClient = DatabaseClient::instance().await;
         return db_client.get_collection(DATABASE_CONFIG.get_collection());
     }
 

@@ -15,7 +15,7 @@ pub struct DatabaseClient {
 impl DatabaseClient {
     pub async fn instance() -> &'static DatabaseClient {
         // get existing database client if exists otherwise establish new client connection
-        let db_client = DATABASE_CLIENT
+        let db_client: &DatabaseClient = DATABASE_CLIENT
             .get_or_init(|| async {
                 return Self::connect().await;
             })
@@ -30,7 +30,7 @@ impl DatabaseClient {
 
     // connect to database
     async fn connect() -> DatabaseClient {
-        let mut client_options = ClientOptions::parse(DATABASE_CONFIG.get_uri().to_string())
+        let mut client_options: ClientOptions = ClientOptions::parse(DATABASE_CONFIG.get_uri().to_string())
             .await
             .expect("uri is invalid");
 
@@ -38,10 +38,10 @@ impl DatabaseClient {
         client_options.app_name = Some(DATABASE_CONFIG.get_db().to_string());
 
         // create database client connection
-        let client = Client::with_options(client_options).expect("client options are invalid");
+        let client: Client = Client::with_options(client_options).expect("client options are invalid");
 
         // select database to use
-        let db = client.database(DATABASE_CONFIG.get_db());
+        let db: Database = client.database(DATABASE_CONFIG.get_db());
 
         return DatabaseClient { client, db };
     }
