@@ -39,7 +39,7 @@ async fn main() {
                 .expect("failed to flush standard output text");
 
             // intialise command string
-            let mut command: String = String::new();
+            let mut cmd: String = String::new();
 
             // loop through all input characters after user hits enter
             loop {
@@ -51,11 +51,11 @@ async fn main() {
                 }) = read().unwrap()
                 {
                     match code {
-                        KeyCode::Char(character) => {
-                            if character == CHI_END_CMD_CHAR {
+                        KeyCode::Char(char) => {
+                            if char == CHI_END_CMD_CHAR {
                                 break; // exit the inner loop
                             } else {
-                                command.push(character);
+                                cmd.push(char);
                             }
                         }
                         _ => {} // throw away anything that isn't a character
@@ -64,7 +64,7 @@ async fn main() {
             }
 
             // process command
-            if command.trim().to_lowercase().eq(CHI_SHOW_HISTORY_CMD) {
+            if cmd.trim().to_lowercase().eq(CHI_SHOW_HISTORY_CMD) {
                 // fetch clipboard data from database
                 let clipboard_data_list: Vec<ClipboardData> =
                     ClipboardDataService::fetch_clipboard_data(5).await;
@@ -87,16 +87,16 @@ async fn main() {
         ClipboardProvider::new().expect("failed to create clipboard context");
 
     // empty previous data string
-    let mut previous_data: String = String::new();
+    let mut prev_data: String = String::new();
 
     loop {
         // retrieve clipboard data
-        let result: Result<String, Box<dyn Error>> = clipboard_context.get_contents();
+        let res: Result<String, Box<dyn Error>> = clipboard_context.get_contents();
 
-        match result {
+        match res {
             Ok(data) => {
                 // validate data to prevent persisting duplicates
-                if data != previous_data {
+                if data != prev_data {
                     // get current local date time
                     let date_time: DateTime<Local> = Local::now();
 
@@ -106,7 +106,7 @@ async fn main() {
                     println!("{}", data);
 
                     // set current data as previous data
-                    previous_data = data;
+                    prev_data = data;
                 }
             }
             Err(err) => {

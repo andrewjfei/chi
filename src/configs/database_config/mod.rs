@@ -9,7 +9,7 @@ use crate::constants::{
 
 lazy_static! {
   // lazy load database config
-  pub static ref DATABASE_CONFIG: DatabaseConfig = DatabaseConfig::load();
+  pub static ref DB_CONFIG: DatabaseConfig = DatabaseConfig::load();
 }
 
 #[derive(Debug)]

@@ -5,7 +5,7 @@ use mongodb::{
 };
 
 use crate::{
-    configs::database_config::DATABASE_CONFIG,
+    configs::database_config::DB_CONFIG,
     models::{clipboard_data::ClipboardData, database_client::DatabaseClient},
 };
 
@@ -19,7 +19,7 @@ impl ClipboardDataRepository {
         let collection: Collection<Document> = Self::get_collection().await;
 
         // convert clipboard data object to a document
-        let doc: Document = Self::to_document(clipboard_data).unwrap();
+        let doc: Document = Self::to_doc(clipboard_data).unwrap();
 
         // insert document into collection
         collection.insert_one(doc, None).await.unwrap();
@@ -63,17 +63,17 @@ impl ClipboardDataRepository {
 
     async fn get_collection() -> Collection<Document> {
         let db_client: &DatabaseClient = DatabaseClient::instance().await;
-        return db_client.get_collection(DATABASE_CONFIG.get_collection());
+        return db_client.get_collection(DB_CONFIG.get_collection());
     }
 
-    fn to_document(clipboard_data: &ClipboardData) -> Result<Document, Error> {
+    fn to_doc(clipboard_data: &ClipboardData) -> Result<Document, Error> {
         // serialise clipboard data model to bson
         let serialised_object: Bson =
             to_bson(clipboard_data).expect("error serialising clipboard data model to bson");
 
         // verify serialised object is a document
         return match serialised_object {
-            Bson::Document(document) => Ok(document),
+            Bson::Document(doc) => Ok(doc),
             _ => panic!("serialized object is not a document"),
         };
     }
