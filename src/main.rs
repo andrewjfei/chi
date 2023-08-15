@@ -1,5 +1,6 @@
 // register modules
 mod configs;
+mod constants;
 mod enums;
 mod models;
 mod repositories;
@@ -15,9 +16,11 @@ use std::{
     io::{stdout, Write},
 };
 
-use services::clipboard_data_service::ClipboardDataService;
-
-use crate::models::clipboard_data::ClipboardData;
+use crate::{
+    constants::{CHI_END_CMD_CHAR, CHI_NEW_CMD_PROMPT, CHI_SHOW_HISTORY_CMD},
+    models::clipboard_data::ClipboardData,
+    services::clipboard_data_service::ClipboardDataService,
+};
 
 #[tokio::main]
 async fn main() {
@@ -27,7 +30,8 @@ async fn main() {
     // spawn async thread to handle terminal cli commands
     tokio::spawn(async {
         loop {
-            print!("chi> ");
+            // prompt user that application is ready to accept commands
+            print!("{}", CHI_NEW_CMD_PROMPT);
 
             // force print all buffered text into the standout output stream
             stdout()
@@ -48,7 +52,7 @@ async fn main() {
                 {
                     match code {
                         KeyCode::Char(character) => {
-                            if character == ';' {
+                            if character == CHI_END_CMD_CHAR {
                                 break; // exit the inner loop
                             } else {
                                 command.push(character);
@@ -60,12 +64,17 @@ async fn main() {
             }
 
             // process command
-            if command.trim().eq("list") {
+            if command.trim().to_lowercase().eq(CHI_SHOW_HISTORY_CMD) {
                 // fetch clipboard data from database
-                let clipboard_data_list: Vec<ClipboardData> = ClipboardDataService::fetch_clipboard_data(5).await;
+                let clipboard_data_list: Vec<ClipboardData> =
+                    ClipboardDataService::fetch_clipboard_data(5).await;
 
                 for clipboard_data in clipboard_data_list {
-                    println!("{} {}", clipboard_data.get_date_time(), clipboard_data.get_data());
+                    println!(
+                        "{} {}",
+                        clipboard_data.get_date_time(),
+                        clipboard_data.get_data()
+                    );
                 }
             }
         }

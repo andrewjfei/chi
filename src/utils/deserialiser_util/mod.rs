@@ -1,7 +1,13 @@
 use chrono::{DateTime, Local};
 use serde::{de::Error, Deserialize, Deserializer};
 
-use crate::enums::clipboard_data_type::ClipboardDataType;
+use crate::{
+    constants::{
+        ENUM_CLIPBOARD_DATA_EMAIL, ENUM_CLIPBOARD_DATA_FILE, ENUM_CLIPBOARD_DATA_IMAGE,
+        ENUM_CLIPBOARD_DATA_LINK, ENUM_CLIPBOARD_DATA_TEXT,
+    },
+    enums::clipboard_data_type::ClipboardDataType,
+};
 
 pub struct DeserialiserUtil {
     // no properties
@@ -13,7 +19,7 @@ impl DeserialiserUtil {
         D: Deserializer<'de>,
     {
         let date_time_str: String = Deserialize::deserialize(deserialiser)
-            .expect("failed to desrialise DateTime data type");
+            .expect("failed to desrialise date time data type");
 
         return DateTime::parse_from_rfc3339(&date_time_str)
             .map_err(Error::custom)
@@ -27,16 +33,16 @@ impl DeserialiserUtil {
         D: Deserializer<'de>,
     {
         let clipboard_data_type_str: String = Deserialize::deserialize(deserialiser)
-            .expect("failed to desrialise ClipboardDataType enum");
+            .expect("failed to desrialise clipboard data type enum");
 
         return match clipboard_data_type_str.as_str() {
-            "EMAIL" => Ok(ClipboardDataType::Email),
-            "FILE" => Ok(ClipboardDataType::File),
-            "IMAGE" => Ok(ClipboardDataType::Image),
-            "LINK" => Ok(ClipboardDataType::Link),
-            "TEXT" => Ok(ClipboardDataType::Text),
+            str if str == ENUM_CLIPBOARD_DATA_EMAIL => Ok(ClipboardDataType::Email),
+            str if str == ENUM_CLIPBOARD_DATA_FILE => Ok(ClipboardDataType::File),
+            str if str == ENUM_CLIPBOARD_DATA_IMAGE => Ok(ClipboardDataType::Image),
+            str if str == ENUM_CLIPBOARD_DATA_LINK => Ok(ClipboardDataType::Link),
+            str if str == ENUM_CLIPBOARD_DATA_TEXT => Ok(ClipboardDataType::Text),
             _ => Err(Error::custom(format_args!(
-                "invalid ClipboardDataType {}",
+                "invalid clipboard data type {}",
                 clipboard_data_type_str
             ))),
         };

@@ -1,7 +1,13 @@
 use chrono::{DateTime, Local};
 use serde::{Serialize, Serializer};
 
-use crate::enums::clipboard_data_type::ClipboardDataType;
+use crate::{
+    constants::{
+        ENUM_CLIPBOARD_DATA_EMAIL, ENUM_CLIPBOARD_DATA_FILE, ENUM_CLIPBOARD_DATA_IMAGE,
+        ENUM_CLIPBOARD_DATA_LINK, ENUM_CLIPBOARD_DATA_TEXT,
+    },
+    enums::clipboard_data_type::ClipboardDataType,
+};
 
 #[cfg(test)]
 mod tests;
@@ -30,11 +36,11 @@ impl SerialiserUtil {
         S: Serializer,
     {
         let clipboard_data_type_str = match data_type {
-            ClipboardDataType::Email => "EMAIL",
-            ClipboardDataType::File => "FILE",
-            ClipboardDataType::Image => "IMAGE",
-            ClipboardDataType::Link => "LINK",
-            ClipboardDataType::Text => "TEXT",
+            ClipboardDataType::Email => ENUM_CLIPBOARD_DATA_EMAIL,
+            ClipboardDataType::File => ENUM_CLIPBOARD_DATA_FILE,
+            ClipboardDataType::Image => ENUM_CLIPBOARD_DATA_IMAGE,
+            ClipboardDataType::Link => ENUM_CLIPBOARD_DATA_LINK,
+            ClipboardDataType::Text => ENUM_CLIPBOARD_DATA_TEXT,
         };
 
         return clipboard_data_type_str.serialize(serialiser);
